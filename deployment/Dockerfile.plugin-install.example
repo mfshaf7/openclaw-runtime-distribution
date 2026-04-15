@@ -3,28 +3,14 @@ FROM ${OPENCLAW_BASE_IMAGE}
 
 # Add a practical Linux baseline for built-in/OpenClaw skills.
 USER root
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-      ffmpeg \
-      gh \
-      jq \
-      python3-pip \
-      ripgrep \
-      tmux && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update &&     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends       ffmpeg       gh       jq       python3-pip       ripgrep       tmux &&     rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --break-system-packages --no-cache-dir uv
 
-# Overlay the bundled Telegram runtime with the pinned enhanced Telegram source.
-# This preserves bundled plugin precedence while making the runtime reproducible.
-COPY --chown=node:node deployment/.build/telegram-bundled-overlay/ /app/dist/extensions/telegram/
-COPY --chown=node:node deployment/.build/plugin-artifacts/ /tmp/openclaw-plugin-artifacts/
+# Stage pinned bundled plugins from source-controlled packlists so the runtime
+# loads both Telegram and host-control from the deterministic bundled seam.
+COPY --chown=node:node deployment/.build/bundled-plugins/ /app/extensions/
 COPY --chown=node:node deployment/workspaces/security-architecture/ /home/node/.openclaw/workspace-security-architecture/
 
+ENV OPENCLAW_BUNDLED_PLUGINS_DIR=/app/extensions
 USER node
-RUN set -eu; \
-    test -n "$(find /tmp/openclaw-plugin-artifacts -maxdepth 1 -type f -name '*.tgz' -print -quit)"; \
-    for plugin in /tmp/openclaw-plugin-artifacts/*.tgz; do \
-      openclaw plugins install --force --dangerously-force-unsafe-install "$plugin"; \
-    done; \
-    rm -rf /tmp/openclaw-plugin-artifacts

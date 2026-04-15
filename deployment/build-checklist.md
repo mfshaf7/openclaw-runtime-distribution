@@ -25,11 +25,11 @@
 - [ ] `./deployment/verify-telegram-router-contract.sh` passes
 - [ ] `./deployment/verify-bridge-workspace.sh` passes
 - [ ] `./deployment/verify-host-control-contract.sh` passes
-- [ ] Telegram packlist staged into `deployment/.build/telegram-bundled-overlay` through `./deployment/package-local-plugins.sh`
-- [ ] Host-control plugin artifact packaged through `./deployment/package-local-plugins.sh`
+- [ ] Telegram and host-control packlists staged into `deployment/.build/bundled-plugins/` through `./deployment/package-local-plugins.sh`
 - [ ] Gateway image built through `./deployment/build-openclaw-local.sh` or an equivalent command path
-- [ ] Bundled Telegram overlay applied in `/app/dist/extensions/telegram`
-- [ ] Host-control installed through `openclaw plugins install`; Telegram is not installed as a same-id managed plugin override
+- [ ] Bundled Telegram overlay applied in `/app/extensions/telegram`
+- [ ] Bundled host-control overlay applied in `/app/extensions/host-control`
+- [ ] `OPENCLAW_BUNDLED_PLUGINS_DIR=/app/extensions` set in the image runtime
 - [ ] `gateway.auth.rateLimit` configured when `gateway.bind` stays beyond loopback
 - [ ] Host firewall rules restrict OpenClaw ports if Docker/WSL cannot enforce localhost-only publish safely
 - [ ] Startup logs captured
