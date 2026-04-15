@@ -55,6 +55,12 @@ disallowed = sorted(
     or '/test/' in path
     or path.startswith('__tests__/')
     or '.test.' in path
+    or '.test-' in path
+    or 'test-support' in path
+    or 'test-utils' in path
+    or 'fixture-test-support' in path
+    or 'e2e-harness' in path
+    or path.endswith('.d.ts')
 )
 if disallowed:
     print(f"Managed plugin packlist for {plugin_root} includes non-runtime files:", file=sys.stderr)
