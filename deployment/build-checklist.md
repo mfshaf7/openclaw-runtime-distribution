@@ -33,6 +33,8 @@
 - [ ] No same-id global Telegram override is present in `/home/node/.openclaw/extensions/telegram`
 - [ ] Bundled host-control runtime present under `/app/extensions/host-control`
 - [ ] Host-control remains registered in the runtime plugin registry
+- [ ] Deployment contract mounts `/home/node/.openclaw/media` when Telegram file or screenshot delivery depends on bridge-staged media
+- [ ] Host-control permission gates in the distribution package still match the intended stage/prod contract, including any deliberate admin-high-risk enablement
 - [ ] `gateway.auth.rateLimit` configured when `gateway.bind` stays beyond loopback
 - [ ] Host firewall rules restrict OpenClaw ports if Docker/WSL cannot enforce localhost-only publish safely
 - [ ] Startup logs captured

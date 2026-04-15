@@ -307,9 +307,33 @@ function createExportTool(api, definition) {
   };
 }
 
+function createAdminTool(api, definition) {
+  return {
+    name: definition.name,
+    label: definition.label,
+    description: definition.description,
+    parameters: definition.parameters,
+    async execute(_id, params) {
+      const config = resolveHostControlConfig(api);
+      if (!config.allowAdminOperations) {
+        denyByPolicy("Admin operations are disabled in host-control plugin config");
+      }
+      requireConfirmedAction(params, definition.label);
+      const payload = buildPayload(
+        api,
+        definition.operation,
+        normalizeHostArguments(definition.mapParams(params)),
+      );
+      const result = await callHostControlBridge(config, payload);
+      return jsonResult(result.result);
+    },
+  };
+}
+
 export function createHostControlTools(api) {
   const pluginConfig = api.pluginConfig ?? {};
   const allowWriteOperations = pluginConfig.allowWriteOperations === true;
+  const allowAdminOperations = pluginConfig.allowAdminOperations === true;
   const allowExportOperations = pluginConfig.allowExportOperations === true;
   const tools = [
     createReadTool(api, {
@@ -423,6 +447,31 @@ export function createHostControlTools(api) {
       }),
       mapParams: (params) => ({ path: params.path }),
     }),
+    );
+  }
+
+  if (allowAdminOperations) {
+    tools.push(
+      createAdminTool(api, {
+        name: "host_control_turn_off_monitors",
+        label: "Host Control Turn Off Monitors",
+        description: "Turn the host monitor(s) off.",
+        operation: "display.monitor_power",
+        parameters: operationSchema({
+          confirm: { type: "boolean", description: "Must be true for admin actions." },
+        }),
+        mapParams: () => ({ action: "off" }),
+      }),
+      createAdminTool(api, {
+        name: "host_control_turn_on_monitors",
+        label: "Host Control Turn On Monitors",
+        description: "Turn the host monitor(s) back on.",
+        operation: "display.monitor_power",
+        parameters: operationSchema({
+          confirm: { type: "boolean", description: "Must be true for admin actions." },
+        }),
+        mapParams: () => ({ action: "on" }),
+      }),
     );
   }
 

@@ -59,6 +59,7 @@ export function resolveHostControlConfig(api) {
     },
     sharedPathMap: toSharedPathMap(cfg.sharedPathMap),
     allowWriteOperations: toBoolean(cfg.allowWriteOperations, false),
+    allowAdminOperations: toBoolean(cfg.allowAdminOperations, false),
     allowExportOperations: toBoolean(cfg.allowExportOperations, false),
     allowBrowserInspect: toBoolean(cfg.allowBrowserInspect, false),
   };
