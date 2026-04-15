@@ -1,0 +1,20 @@
+services:
+  openclaw-gateway:
+    # Official built-in Telegram replacement model:
+    # build:
+    #   context: ..
+    #   dockerfile: deployment/Dockerfile.telegram-bundled.example
+    #
+    # Leave host port publishing at the upstream default in Docker/WSL
+    # environments unless you have validated a localhost-only publish path
+    # on your actual host. Some Windows/WSL Docker forwarders reject
+    # "127.0.0.1:hostPort:containerPort" mappings.
+    ports:
+      - "18789:18789"
+      - "18790:18790"
+    restart: unless-stopped
+    environment:
+      TZ: ${OPENCLAW_TZ:-UTC}
+
+  openclaw-cli:
+    restart: "no"

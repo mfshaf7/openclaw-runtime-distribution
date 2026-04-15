@@ -1,0 +1,40 @@
+{
+  "name": "@mfshaf7/host-control-plugin",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Managed host-control plugin package for the OpenClaw host bridge",
+  "type": "module",
+  "keywords": [
+    "openclaw",
+    "host-control",
+    "plugin",
+    "bridge",
+    "tools"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "pack:plugin": "npm pack"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.mjs"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.4.12",
+      "minGatewayVersion": "2026.4.12"
+    },
+    "build": {
+      "openclawVersion": "2026.4.12",
+      "pluginSdkVersion": "2026.4.12"
+    }
+  },
+  "files": [
+    "README.md",
+    "index.mjs",
+    "openclaw.plugin.json",
+    "src/"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
