@@ -4,11 +4,12 @@ set -euo pipefail
 ROOT="${1:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
 PARENT="$(cd -- "$ROOT/.." && pwd)"
 ARTIFACT_DIR="${OPENCLAW_PLUGIN_ARTIFACTS_DIR:-$ROOT/deployment/.build/plugin-artifacts}"
+TELEGRAM_OVERLAY_DIR="${OPENCLAW_TELEGRAM_OVERLAY_DIR:-$ROOT/deployment/.build/telegram-bundled-overlay}"
 TELEGRAM_PLUGIN_ROOT="${OPENCLAW_TELEGRAM_REPO:-$PARENT/openclaw-telegram-enhanced}"
 HOST_CONTROL_PLUGIN_ROOT="$ROOT/host-control-openclaw-plugin"
 
-mkdir -p "$ARTIFACT_DIR"
-rm -f "$ARTIFACT_DIR"/*.tgz
+mkdir -p "$ARTIFACT_DIR" "$TELEGRAM_OVERLAY_DIR"
+rm -rf "$ARTIFACT_DIR"/*.tgz "$TELEGRAM_OVERLAY_DIR"/*
 
 if [[ ! -d "$TELEGRAM_PLUGIN_ROOT" ]]; then
   echo "Missing Telegram plugin source repo: $TELEGRAM_PLUGIN_ROOT" >&2
@@ -25,15 +26,11 @@ fi
 "$ROOT/deployment/verify-host-control-contract.sh" "$ROOT"
 
 echo
-echo "Packaging managed OpenClaw plugins from pinned source repos..."
+echo "Preparing OpenClaw runtime build inputs from pinned source repos..."
 echo "  telegram source : $TELEGRAM_PLUGIN_ROOT"
 echo "  host-control    : $HOST_CONTROL_PLUGIN_ROOT"
-echo "  output dir      : $ARTIFACT_DIR"
-
-plugins=(
-  "$TELEGRAM_PLUGIN_ROOT"
-  "$HOST_CONTROL_PLUGIN_ROOT"
-)
+echo "  plugin output   : $ARTIFACT_DIR"
+echo "  telegram overlay: $TELEGRAM_OVERLAY_DIR"
 
 assert_packlist_is_publishable() {
   local plugin_root="$1"
@@ -70,14 +67,40 @@ if disallowed:
 PACKJSON
 }
 
-for plugin_root in "${plugins[@]}"; do
-  if [[ ! -f "$plugin_root/package.json" ]]; then
-    echo "Missing package.json for plugin package: $plugin_root" >&2
-    exit 1
-  fi
-  assert_packlist_is_publishable "$plugin_root"
-  (cd "$plugin_root" && npm pack --pack-destination "$ARTIFACT_DIR" >/dev/null)
-done
+stage_packlist_files() {
+  local plugin_root="$1"
+  local target_dir="$2"
+  local pack_manifest
+  pack_manifest="$(cd "$plugin_root" && npm pack --json --dry-run)"
+  PACK_MANIFEST="$pack_manifest" python3 - "$plugin_root" "$target_dir" <<'PACKCOPY'
+import json
+import os
+import pathlib
+import shutil
+import sys
 
-echo "Packaged plugin artifacts:"
-find "$ARTIFACT_DIR" -maxdepth 1 -type f -name '*.tgz' -printf '  %f\n' | sort
+plugin_root = pathlib.Path(sys.argv[1])
+target_dir = pathlib.Path(sys.argv[2])
+entries = json.loads(os.environ["PACK_MANIFEST"])
+if not entries:
+    raise SystemExit(f"npm pack --json --dry-run returned no entries for {plugin_root}")
+for item in entries[0].get('files', []):
+    rel = item.get('path')
+    if not rel:
+        continue
+    src = plugin_root / rel
+    dst = target_dir / rel
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(src, dst)
+PACKCOPY
+}
+
+assert_packlist_is_publishable "$TELEGRAM_PLUGIN_ROOT"
+assert_packlist_is_publishable "$HOST_CONTROL_PLUGIN_ROOT"
+
+stage_packlist_files "$TELEGRAM_PLUGIN_ROOT" "$TELEGRAM_OVERLAY_DIR"
+(cd "$HOST_CONTROL_PLUGIN_ROOT" && npm pack --pack-destination "$ARTIFACT_DIR" >/dev/null)
+
+echo "Prepared build inputs:"
+find "$ARTIFACT_DIR" -maxdepth 1 -type f -name '*.tgz' -printf '  plugin %f\n' | sort
+find "$TELEGRAM_OVERLAY_DIR" -type f -printf '  telegram %P\n' | sort

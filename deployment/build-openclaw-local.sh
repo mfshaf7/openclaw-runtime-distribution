@@ -11,7 +11,7 @@ if [[ ! -f "$DOCKERFILE" ]]; then
   exit 1
 fi
 
-echo "Preparing managed-plugin OpenClaw image build"
+echo "Preparing OpenClaw image build with bundled Telegram overlay and managed host-control plugin"
 echo "  root      : $ROOT"
 echo "  dockerfile: $DOCKERFILE"
 echo "  base image: $BASE_IMAGE"

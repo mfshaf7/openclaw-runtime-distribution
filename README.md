@@ -6,7 +6,7 @@ It assembles a reproducible gateway image from pinned upstream repos without car
 
 ## What belongs here
 
-- managed-plugin image assembly scripts
+- bundled Telegram overlay build inputs
 - the local `host-control-openclaw-plugin`
 - runtime-facing workspace templates
 - build and operator checklists
@@ -28,16 +28,18 @@ It assembles a reproducible gateway image from pinned upstream repos without car
 
 In this model:
 
-- `openclaw-telegram-enhanced` is packaged directly from `OPENCLAW_TELEGRAM_REPO`
+- `openclaw-telegram-enhanced` is staged directly from `OPENCLAW_TELEGRAM_REPO` into a bundled Telegram overlay
+- `host-control-openclaw-plugin` is the only managed plugin artifact installed through `openclaw plugins install`
 - `openclaw-host-bridge` stays standalone and is only validated through contract checks
-- `openclaw-runtime-distribution` owns the build/distribution path
+- `openclaw-runtime-distribution` owns the build and distribution path
 
 ## Build flow
 
 1. Validate the pinned Telegram and bridge repos.
-2. Package Telegram and host-control as managed plugin artifacts with `npm pack`.
-3. Build a gateway image that installs those artifacts through `openclaw plugins install`.
-4. Keep the resulting image reproducible by pinning the source SHAs in GitOps.
+2. Stage the Telegram packlist into `deployment/.build/telegram-bundled-overlay`.
+3. Package `host-control-openclaw-plugin` as the managed plugin artifact.
+4. Build a gateway image that overlays bundled Telegram in `/app/dist/extensions/telegram` and installs host-control through `openclaw plugins install`.
+5. Keep the resulting image reproducible by pinning the source SHAs in GitOps.
 
 ## Start here
 

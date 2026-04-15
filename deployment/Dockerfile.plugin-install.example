@@ -15,10 +15,9 @@ RUN apt-get update && \
 
 RUN python3 -m pip install --break-system-packages --no-cache-dir uv
 
-# Remove the bundled Telegram implementation so the managed plugin install has a
-# single canonical telegram channel candidate.
-RUN rm -rf /app/extensions/telegram
-
+# Overlay the bundled Telegram runtime with the pinned enhanced Telegram source.
+# This preserves bundled plugin precedence while making the runtime reproducible.
+COPY --chown=node:node deployment/.build/telegram-bundled-overlay/ /app/dist/extensions/telegram/
 COPY --chown=node:node deployment/.build/plugin-artifacts/ /tmp/openclaw-plugin-artifacts/
 COPY --chown=node:node deployment/workspaces/security-architecture/ /home/node/.openclaw/workspace-security-architecture/
 
