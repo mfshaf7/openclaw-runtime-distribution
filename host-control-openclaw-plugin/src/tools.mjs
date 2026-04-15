@@ -191,13 +191,13 @@ function normalizeHostArguments(payload) {
 }
 
 function createReadTool(api, definition) {
-  const config = resolveHostControlConfig(api);
   return {
     name: definition.name,
     label: definition.label,
     description: definition.description,
     parameters: definition.parameters,
     async execute(_id, params) {
+      const config = resolveHostControlConfig(api);
       const payload = buildPayload(
         api,
         definition.operation,
@@ -210,7 +210,6 @@ function createReadTool(api, definition) {
 }
 
 function createAllowedRootsSearchTool(api) {
-  const config = resolveHostControlConfig(api);
   return {
     name: "host_control_find_in_allowed_roots",
     label: "Host Control Find In Allowed Roots",
@@ -221,6 +220,7 @@ function createAllowedRootsSearchTool(api) {
       limit: { type: "number", description: "Maximum total results across allowed roots." },
     }),
     async execute(_id, params) {
+      const config = resolveHostControlConfig(api);
       const pattern = params?.pattern;
       const limit = Math.max(1, Number(params?.limit || 20));
       const rootsPayload = buildPayload(api, "config.allowed_roots.list", {});
@@ -260,13 +260,13 @@ function createAllowedRootsSearchTool(api) {
 }
 
 function createWriteTool(api, definition) {
-  const config = resolveHostControlConfig(api);
   return {
     name: definition.name,
     label: definition.label,
     description: definition.description,
     parameters: definition.parameters,
     async execute(_id, params) {
+      const config = resolveHostControlConfig(api);
       if (!config.allowWriteOperations) {
         denyByPolicy("Write operations are disabled in host-control plugin config");
       }
@@ -283,13 +283,13 @@ function createWriteTool(api, definition) {
 }
 
 function createExportTool(api, definition) {
-  const config = resolveHostControlConfig(api);
   return {
     name: definition.name,
     label: definition.label,
     description: definition.description,
     parameters: definition.parameters,
     async execute(_id, params) {
+      const config = resolveHostControlConfig(api);
       if (!config.allowExportOperations) {
         denyByPolicy("Export operations are disabled in host-control plugin config");
       }
@@ -308,7 +308,9 @@ function createExportTool(api, definition) {
 }
 
 export function createHostControlTools(api) {
-  const config = resolveHostControlConfig(api);
+  const pluginConfig = api.pluginConfig ?? {};
+  const allowWriteOperations = pluginConfig.allowWriteOperations === true;
+  const allowExportOperations = pluginConfig.allowExportOperations === true;
   const tools = [
     createReadTool(api, {
       name: "host_control_health_check",
@@ -384,7 +386,7 @@ export function createHostControlTools(api) {
     }),
   ];
 
-  if (config.allowWriteOperations) {
+  if (allowWriteOperations) {
     tools.push(
       createWriteTool(api, {
       name: "host_control_fs_mkdir",
@@ -424,7 +426,7 @@ export function createHostControlTools(api) {
     );
   }
 
-  if (config.allowExportOperations) {
+  if (allowExportOperations) {
     tools.push(
       createExportTool(api, {
       name: "host_control_stage_for_telegram",

@@ -3,6 +3,24 @@ import assert from "node:assert/strict";
 
 import { createHostControlTools } from "../src/tools.mjs";
 
+test("createHostControlTools registers read tools without requiring bridge config at load time", () => {
+  delete process.env.OPENCLAW_HOST_BRIDGE_URL;
+  delete process.env.OPENCLAW_HOST_BRIDGE_TOKEN;
+
+  const tools = createHostControlTools({
+    pluginConfig: {},
+    toolContext: {
+      messageChannel: "web",
+      sessionKey: "agent:main:test",
+      requesterSenderId: "1337",
+    },
+  });
+
+  assert.ok(tools.find((entry) => entry.name === "host_control_health_check"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_fs_mkdir"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_send_file_to_telegram"));
+});
+
 test("stage_for_telegram export tool emits MEDIA:path for staged files", async () => {
   process.env.OPENCLAW_GATEWAY_TOKEN = "token";
 
