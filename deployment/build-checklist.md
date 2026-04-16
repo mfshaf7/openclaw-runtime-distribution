@@ -22,6 +22,7 @@
 - [ ] Persistent storage path confirmed
 - [ ] `OPENCLAW_TELEGRAM_REPO` points at the pinned standalone `openclaw-telegram-enhanced` checkout used for the bundled Telegram packaged-runtime overlay
 - [ ] `OPENCLAW_HOST_BRIDGE_REPO` points at the pinned standalone `openclaw-host-bridge` checkout used for validation
+- [ ] Owner-published interface manifests are present in the standalone Telegram repo, standalone bridge repo, and the local `host-control-openclaw-plugin/`
 - [ ] `./deployment/verify-telegram-router-contract.sh` passes
 - [ ] `./deployment/verify-bridge-workspace.sh` passes
 - [ ] `./deployment/verify-host-control-contract.sh` passes
