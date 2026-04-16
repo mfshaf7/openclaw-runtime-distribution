@@ -3,6 +3,91 @@ import assert from "node:assert/strict";
 
 import { createHostControlTools } from "../src/tools.mjs";
 
+test("createHostControlTools registers read tools without requiring bridge config at load time", () => {
+  delete process.env.OPENCLAW_HOST_BRIDGE_URL;
+  delete process.env.OPENCLAW_HOST_BRIDGE_TOKEN;
+
+  const tools = createHostControlTools({
+    pluginConfig: {},
+    toolContext: {
+      messageChannel: "web",
+      sessionKey: "agent:main:test",
+      requesterSenderId: "1337",
+    },
+  });
+
+  assert.ok(tools.find((entry) => entry.name === "host_control_health_check"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_fs_mkdir"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_turn_off_monitors"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_send_file_to_telegram"));
+});
+
+test("admin tools are hidden until allowAdminOperations is enabled", () => {
+  process.env.OPENCLAW_GATEWAY_TOKEN = "token";
+
+  const tools = createHostControlTools({
+    pluginConfig: {
+      bridgeUrl: "http://host.docker.internal:48721",
+      authTokenEnv: "OPENCLAW_GATEWAY_TOKEN",
+    },
+    toolContext: {
+      messageChannel: "telegram",
+      sessionKey: "agent:main:telegram:direct:test",
+      requesterSenderId: "1337",
+    },
+  });
+
+  assert.ok(!tools.find((entry) => entry.name === "host_control_turn_off_monitors"));
+  assert.ok(!tools.find((entry) => entry.name === "host_control_turn_on_monitors"));
+});
+
+test("monitor admin tool calls bridge when allowAdminOperations is enabled", async () => {
+  process.env.OPENCLAW_GATEWAY_TOKEN = "token";
+
+  const originalFetch = globalThis.fetch;
+  let capturedRequest;
+  globalThis.fetch = async (_url, init) => {
+    capturedRequest = JSON.parse(init.body);
+    return {
+      ok: true,
+      async json() {
+        return {
+          ok: true,
+          result: {
+            action: "off",
+            changed: true,
+          },
+        };
+      },
+    };
+  };
+
+  try {
+    const tools = createHostControlTools({
+      pluginConfig: {
+        bridgeUrl: "http://host.docker.internal:48721",
+        authTokenEnv: "OPENCLAW_GATEWAY_TOKEN",
+        allowAdminOperations: true,
+      },
+      toolContext: {
+        messageChannel: "telegram",
+        sessionKey: "agent:main:telegram:direct:test",
+        requesterSenderId: "1337",
+      },
+    });
+    const tool = tools.find((entry) => entry.name === "host_control_turn_off_monitors");
+    assert.ok(tool, "expected turn_off_monitors tool to be registered");
+
+    const result = await tool.execute("call-monitor-off", { confirm: true });
+
+    assert.equal(capturedRequest.operation, "display.monitor_power");
+    assert.deepEqual(capturedRequest.arguments, { action: "off" });
+    assert.match(result.content[0].text, /"changed": true/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("stage_for_telegram export tool emits MEDIA:path for staged files", async () => {
   process.env.OPENCLAW_GATEWAY_TOKEN = "token";
 

@@ -23,6 +23,7 @@
         }
       },
       "allowWriteOperations": { "type": "boolean" },
+      "allowAdminOperations": { "type": "boolean" },
       "allowExportOperations": { "type": "boolean" },
       "allowBrowserInspect": { "type": "boolean" }
     }

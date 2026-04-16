@@ -1,49 +1,93 @@
 # OpenClaw Runtime Distribution
 
-This repository is the thin distribution layer for your OpenClaw runtime.
+`openclaw-runtime-distribution` is the active stage/prod runtime composition
+repository for the current governed gateway build path.
 
-It assembles a reproducible gateway image from pinned upstream repos without carrying copied Telegram or bridge source trees inside the repo.
+It assembles a reproducible gateway image from pinned upstream repos without
+carrying copied Telegram or bridge source trees as long-lived hidden forks.
 
-## What belongs here
+## What This Repository Owns
 
-- bundled Telegram overlay build inputs
-- the local `host-control-openclaw-plugin`
-- runtime-facing workspace templates
-- build and operator checklists
+This repository owns:
 
-## What does not belong here
+- current bundled runtime assembly inputs
+- packaged Telegram runtime seam integration
+- active `host-control-openclaw-plugin` package copy for stage/prod
+- runtime-required workspace templates for the governed image
+- distribution-specific verification and packaging scripts
 
-- copied `openclaw-telegram-enhanced` source
-- copied `openclaw-host-bridge` source
-- mirrored runtime code kept only for image assembly
+It does not own:
 
-## Workspace layout
+- Telegram canonical source
+- bridge canonical source
+- environment approval or digest recording
+- Argo deployment state
 
-```text
-~/projects/
-|-- openclaw-runtime-distribution/
-|-- openclaw-telegram-enhanced/
-`-- openclaw-host-bridge/
-```
+## Current Workflow Role
 
-In this model:
+1. Canonical source repos are updated:
+   - `openclaw-telegram-enhanced`
+   - `openclaw-host-bridge`
+   - active plugin owner in this repo
+2. This repo stages the required packaged runtime inputs.
+3. Verification scripts confirm the bundled runtime contract.
+4. The resulting artifact is built and published through the governed platform
+   workflow.
+5. `platform-engineering` records the approved digest and SHAs.
 
-- `openclaw-telegram-enhanced` is staged directly from `OPENCLAW_TELEGRAM_REPO` into a bundled Telegram overlay
-- `host-control-openclaw-plugin` is the only managed plugin artifact installed through `openclaw plugins install`
-- `openclaw-host-bridge` stays standalone and is only validated through contract checks
-- `openclaw-runtime-distribution` owns the build and distribution path
+## Supported Telegram Runtime Seam
 
-## Build flow
+The supported seam for the current deployment model is the packaged bundled
+Telegram runtime under `/app/dist/extensions/telegram`.
 
-1. Validate the pinned Telegram and bridge repos.
-2. Stage the Telegram packlist into `deployment/.build/telegram-bundled-overlay`.
-3. Package `host-control-openclaw-plugin` as the managed plugin artifact.
-4. Build a gateway image that overlays bundled Telegram in `/app/dist/extensions/telegram` and installs host-control through `openclaw plugins install`.
-5. Keep the resulting image reproducible by pinning the source SHAs in GitOps.
+That means:
 
-## Start here
+- no same-id global Telegram override recovery path
+- no undocumented Telegram config keys as a compatibility crutch
+- no copied Telegram source tree hidden inside the build repo
+- every OpenClaw base-image update requires contract verification against the
+  packaged runtime seam
+
+## Audit And Visibility
+
+This repo’s main evidence surfaces are build-time and contract-time rather than
+runtime metrics.
+
+- packaging and contract checks:
+  - `deployment/verify-telegram-router-contract.sh`
+  - `deployment/verify-bridge-workspace.sh`
+  - `deployment/verify-host-control-contract.sh`
+- build procedure and requirements:
+  - [deployment/build-checklist.md](deployment/build-checklist.md)
+- migration and seam rationale:
+  - [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
+- final deployment evidence:
+  - source SHAs and digests recorded in `platform-engineering`
+
+## Governance Rules
+
+- Canonical source changes should land in their owner repo first.
+- This repo should stage those sources through supported packaging paths, not by
+  growing new mirrored source trees.
+- If the active build path changes, this README and the platform standards
+  should say so explicitly.
+- If a runtime contract change requires new operator validation, document it in
+  the build checklist and platform runbooks.
+
+## Start Here
 
 - [deployment/build-checklist.md](deployment/build-checklist.md)
-- [deployment/build-openclaw-local.sh](deployment/build-openclaw-local.sh)
-- [deployment/package-local-plugins.sh](deployment/package-local-plugins.sh)
-- [deployment/Dockerfile.plugin-install.example](deployment/Dockerfile.plugin-install.example)
+- [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
+- `deployment/build-openclaw-local.sh`
+- `deployment/package-local-plugins.sh`
+
+## Relationship To Other Repositories
+
+- `openclaw-telegram-enhanced`
+  - canonical Telegram source
+- `openclaw-host-bridge`
+  - canonical host enforcement source
+- `platform-engineering`
+  - release authority and environment approval
+- `openclaw-isolated-deployment`
+  - reference architecture and model explanation

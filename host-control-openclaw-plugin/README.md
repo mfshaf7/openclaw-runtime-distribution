@@ -61,6 +61,11 @@ Hidden until `allowWriteOperations: true`:
 - `host_control_fs_mkdir`
 - `host_control_fs_move`
 
+Hidden until `allowAdminOperations: true`:
+
+- `host_control_turn_off_monitors`
+- `host_control_turn_on_monitors`
+
 Hidden until `allowExportOperations: true`:
 
 - `host_control_stage_for_telegram`
@@ -82,6 +87,7 @@ Hidden until `allowExportOperations: true`:
           "authTokenEnv": "OPENCLAW_HOST_BRIDGE_TOKEN",
           "timeoutMs": 10000,
           "allowWriteOperations": false,
+          "allowAdminOperations": false,
           "allowExportOperations": false,
           "allowBrowserInspect": false
         }
@@ -117,3 +123,11 @@ node test/tools.test.mjs
 - `openclaw-host-bridge`
 - `openclaw-telegram-enhanced`
 - `openclaw-runtime-distribution`
+
+## Distribution contract note
+
+This distribution-scoped plugin package must stay capability-compatible with the
+active deployment contract. If the isolated deployment model adds or tightens a
+host-control permission gate that stage or prod depends on, mirror that gate
+here deliberately instead of letting the runtime-distribution path silently
+drop it.

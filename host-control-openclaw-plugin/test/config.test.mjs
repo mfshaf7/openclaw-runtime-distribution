@@ -19,6 +19,7 @@ test("resolveHostControlConfig uses explicit plugin config and trims trailing sl
       bridgeUrl: "http://host.docker.internal:48721/",
       authTokenEnv: "OPENCLAW_GATEWAY_TOKEN",
       allowWriteOperations: true,
+      allowAdminOperations: true,
       sharedPathMap: {
         from: "/home/example/.openclaw",
         to: "/home/node/.openclaw/",
@@ -28,6 +29,7 @@ test("resolveHostControlConfig uses explicit plugin config and trims trailing sl
   assert.equal(config.bridgeUrl, "http://host.docker.internal:48721");
   assert.equal(config.authToken, "token");
   assert.equal(config.allowWriteOperations, true);
+  assert.equal(config.allowAdminOperations, true);
   assert.deepEqual(config.sharedPathMap, {
     from: "/home/example/.openclaw",
     to: "/home/node/.openclaw",
