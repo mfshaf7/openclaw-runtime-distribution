@@ -69,6 +69,14 @@ runtime metrics.
 - final deployment evidence:
   - source SHAs and digests recorded in `platform-engineering`
 
+## Security References
+
+- [`security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/components/openclaw-runtime-distribution/README.md)
+- [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)
+- [`security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/domains/gitops-and-machine-trust.md)
+- [`security-architecture/docs/reviews/security-review-checklist.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/security-review-checklist.md)
+- [`security-architecture/docs/reviews/components/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/README.md)
+
 ## Governance Rules
 
 - Canonical source changes should land in their owner repo first.
@@ -87,6 +95,12 @@ runtime metrics.
 - [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
 - `deployment/build-openclaw-local.sh`
 - `deployment/package-local-plugins.sh`
+- security review surfaces:
+  - [`security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/components/openclaw-runtime-distribution/README.md)
+  - [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)
+  - [`security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/domains/gitops-and-machine-trust.md)
+  - [`security-architecture/docs/reviews/security-review-checklist.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/security-review-checklist.md)
+  - [`security-architecture/docs/reviews/components/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/README.md)
 
 ## Relationship To Other Repositories
 

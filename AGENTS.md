@@ -19,6 +19,11 @@ promotion state.
 - `README.md`
 - `deployment/build-checklist.md`
 - `deployment/telegram-runtime-migration.md`
+- `security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`
+- `security-architecture/docs/architecture/products/openclaw/required-controls.md`
+- `security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`
+- `security-architecture/docs/reviews/security-review-checklist.md`
+- `security-architecture/docs/reviews/components/README.md`
 
 ## Working Rules
 
