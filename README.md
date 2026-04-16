@@ -88,6 +88,7 @@ runtime metrics.
 - `openclaw-host-bridge`
   - canonical host enforcement source
 - `platform-engineering`
-  - release authority and environment approval
-- `openclaw-isolated-deployment`
-  - reference architecture and model explanation
+  - release authority, environment approval, and platform-side OpenClaw
+    architecture and owner model
+- `security-architecture`
+  - OpenClaw security architecture and trust-boundary judgment
