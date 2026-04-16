@@ -12,6 +12,7 @@ This repository owns:
 
 - current bundled runtime assembly inputs
 - packaged Telegram runtime seam integration
+- experimental Telegram-only overlay artifact packaging for stage rehearsal
 - active `host-control-openclaw-plugin` package copy for stage/prod
 - runtime-required workspace templates for the governed image
 - distribution-specific verification and packaging scripts
@@ -32,14 +33,14 @@ It does not own:
 2. This repo stages the required packaged runtime inputs.
 3. Verification scripts confirm the bundled runtime contract against
    owner-published interface manifests.
-4. The resulting artifact is built and published through the governed platform
-   workflow.
+4. The resulting gateway or Telegram-only experiment artifact is built and
+   published through the governed platform workflow.
 5. `platform-engineering` records the approved digest and SHAs.
 
 ## Supported Telegram Runtime Seam
 
 The supported seam for the current deployment model is the packaged bundled
-Telegram runtime under `/app/dist/extensions/telegram`.
+Telegram runtime under `/app/extensions/telegram`.
 
 That means:
 
@@ -48,6 +49,14 @@ That means:
 - no copied Telegram source tree hidden inside the build repo
 - every OpenClaw base-image update requires contract verification against the
   packaged runtime seam
+
+For stage-only experimentation, the same packaged Telegram overlay may also be
+delivered as a separate immutable artifact and mounted back onto the bundled
+runtime path. That experiment must remain:
+
+- stage-only until separately approved for prod
+- pinned by digest in `platform-engineering`
+- sourced from the same `npm pack` allowlist used for the bundled gateway image
 
 ## Audit And Visibility
 
@@ -58,6 +67,7 @@ runtime metrics.
   - `deployment/verify-telegram-router-contract.sh`
   - `deployment/verify-bridge-workspace.sh`
   - `deployment/verify-host-control-contract.sh`
+  - `deployment/package-telegram-overlay.sh`
 - owner-published interface manifests:
   - `openclaw-telegram-enhanced/contracts/interface-manifest.json`
   - `openclaw-host-bridge/contracts/interface-manifest.json`

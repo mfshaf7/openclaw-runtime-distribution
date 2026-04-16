@@ -39,4 +39,5 @@ promotion state.
 - `./deployment/verify-telegram-router-contract.sh`
 - `./deployment/verify-bridge-workspace.sh`
 - `./deployment/verify-host-control-contract.sh`
+- `./deployment/package-telegram-overlay.sh`
 - `./deployment/build-openclaw-local.sh`

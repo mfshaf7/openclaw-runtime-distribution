@@ -14,10 +14,24 @@ That made the older Telegram customization strategy too brittle. The old setup w
 
 For this deployment, Telegram customization is supported through the packaged bundled runtime seam:
 
-- runtime location: `/app/dist/extensions/telegram`
+- runtime location: `/app/extensions/telegram`
 - token contract: `TELEGRAM_BOT_TOKEN`
 - config contract: documented Telegram config keys only
 - distribution repo responsibility: overlay and verify the packaged runtime, not a same-id global plugin override
+
+## Stage-only experiment seam
+
+To reduce the cost of small Telegram-only fixes during stage rehearsal, the
+same packaged overlay can be delivered as a separate immutable artifact and
+mounted back onto the bundled runtime path:
+
+- packaged overlay source: `deployment/.build/telegram-overlay/telegram`
+- artifact packager: `deployment/package-telegram-overlay.sh`
+- runtime destination: `/app/extensions/telegram`
+- delivery model: stage-only init-container copy into a shared volume
+
+This is an experiment in artifact granularity, not permission to reintroduce a
+same-id global Telegram override or mutable runtime patching.
 
 ## Explicitly unsupported assumptions
 
@@ -32,7 +46,7 @@ Do not rely on:
 
 Every OpenClaw base-image update must prove:
 
-1. the compiled Telegram runtime exists under `/app/dist/extensions/telegram`
+1. the compiled Telegram runtime exists under `/app/extensions/telegram`
 2. `configured-state.js` still gates on `TELEGRAM_BOT_TOKEN`
 3. `openclaw.plugin.json` still advertises the Telegram channel and env var contract
 4. `runtime-api.js` still exports the bundled Telegram runtime hooks
