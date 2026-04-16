@@ -3,26 +3,16 @@ set -euo pipefail
 
 ROOT="${1:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
 PARENT="$(cd -- "$ROOT/.." && pwd)"
-PLUGIN_TOOLS="$ROOT/host-control-openclaw-plugin/src/tools.mjs"
-PLUGIN_TESTS="$ROOT/host-control-openclaw-plugin/test/tools.test.mjs"
-PLUGIN_CONFIG_TESTS="$ROOT/host-control-openclaw-plugin/test/config.test.mjs"
+PLUGIN_DIR="$ROOT/host-control-openclaw-plugin"
+PLUGIN_MANIFEST="$PLUGIN_DIR/contracts/interface-manifest.json"
 CANON_BRIDGE="${OPENCLAW_HOST_BRIDGE_REPO:-$PARENT/openclaw-host-bridge}"
-BRIDGE_BROWSER_OPS="$CANON_BRIDGE/src/ops/browser.mjs"
-BRIDGE_FS_OPS="$CANON_BRIDGE/src/ops/fs.mjs"
-
-search() {
-  local pattern="$1"
-  shift
-  grep -nE "$pattern" "$@"
-}
+BRIDGE_MANIFEST="$CANON_BRIDGE/contracts/interface-manifest.json"
 
 required_paths=(
-  "$PLUGIN_TOOLS"
-  "$PLUGIN_TESTS"
-  "$PLUGIN_CONFIG_TESTS"
+  "$PLUGIN_DIR"
+  "$PLUGIN_MANIFEST"
   "$CANON_BRIDGE"
-  "$BRIDGE_BROWSER_OPS"
-  "$BRIDGE_FS_OPS"
+  "$BRIDGE_MANIFEST"
 )
 
 for path in "${required_paths[@]}"; do
@@ -33,29 +23,77 @@ for path in "${required_paths[@]}"; do
 done
 
 echo "Verifying host-control contract surface"
-echo "  plugin tools : $PLUGIN_TOOLS"
-echo "  bridge repo  : $CANON_BRIDGE"
+echo "  plugin repo       : $PLUGIN_DIR"
+echo "  plugin manifest   : $PLUGIN_MANIFEST"
+echo "  bridge repo       : $CANON_BRIDGE"
+echo "  bridge manifest   : $BRIDGE_MANIFEST"
 echo
 
-if search 'host_control_browser_tab_inspect|host_control_browser_tabs_list|host_control_zip_for_export' "$PLUGIN_TOOLS" >/dev/null; then
-  echo "Scaffold-only tool name still exposed in plugin surface" >&2
-  exit 1
-fi
+npm --prefix "$PLUGIN_DIR" run test:interface-contract
+npm --prefix "$CANON_BRIDGE" run test:interface-contract
 
-if search 'browser\\.tabs\\.inspect|browser\\.tabs\\.list|fs\\.zip_for_export' "$PLUGIN_TOOLS" >/dev/null; then
-  echo "Plugin still references scaffold-only bridge operations" >&2
-  exit 1
-fi
+python3 - "$PLUGIN_MANIFEST" "$BRIDGE_MANIFEST" <<'PY'
+from __future__ import annotations
 
-if ! search 'not implemented yet in the scaffold' "$BRIDGE_BROWSER_OPS" "$BRIDGE_FS_OPS" >/dev/null; then
-  echo "Expected scaffold markers were not found in bridge sources" >&2
-  exit 1
-fi
+import json
+import sys
+from pathlib import Path
 
-node "$PLUGIN_TESTS"
-node "$PLUGIN_CONFIG_TESTS"
-node --test "$CANON_BRIDGE"/test/*.test.mjs
+plugin_manifest = json.loads(Path(sys.argv[1]).read_text())
+bridge_manifest = json.loads(Path(sys.argv[2]).read_text())
+
+errors: list[str] = []
+
+if plugin_manifest.get("schemaVersion") != 1:
+    errors.append("plugin manifest schemaVersion must be 1")
+if bridge_manifest.get("schemaVersion") != 1:
+    errors.append("bridge manifest schemaVersion must be 1")
+if plugin_manifest.get("ownerRepo") != "openclaw-runtime-distribution":
+    errors.append("unexpected plugin ownerRepo")
+if plugin_manifest.get("bridgeOwnerRepo") != "openclaw-host-bridge":
+    errors.append("unexpected plugin bridgeOwnerRepo")
+if bridge_manifest.get("ownerRepo") != "openclaw-host-bridge":
+    errors.append("unexpected bridge ownerRepo")
+
+bridge_stable = {entry["name"] for entry in bridge_manifest.get("stableOperations", [])}
+bridge_scaffold = {entry["name"] for entry in bridge_manifest.get("scaffoldOperations", [])}
+plugin_tools = plugin_manifest.get("tools", [])
+plugin_ops = {
+    operation
+    for tool in plugin_tools
+    for operation in tool.get("bridgeOperations", [])
+}
+
+unknown_ops = sorted(plugin_ops - bridge_stable)
+if unknown_ops:
+    errors.append(f"plugin references non-stable bridge operations: {', '.join(unknown_ops)}")
+
+scaffold_overlap = sorted(plugin_ops & bridge_scaffold)
+if scaffold_overlap:
+    errors.append(f"plugin still references scaffold-only bridge operations: {', '.join(scaffold_overlap)}")
+
+declared_forbidden = set(plugin_manifest.get("forbiddenBridgeOperations", []))
+if declared_forbidden != bridge_scaffold:
+    errors.append("plugin forbiddenBridgeOperations must match bridge scaffoldOperations")
+
+full_tool_names = {tool["name"] for tool in plugin_tools}
+for forbidden_name in plugin_manifest.get("forbiddenToolNames", []):
+    if forbidden_name in full_tool_names:
+        errors.append(f"plugin manifest still exposes forbidden tool name {forbidden_name}")
+
+if errors:
+    for error in errors:
+        print(f"ERROR: {error}")
+    sys.exit(1)
+
+print(
+    "host-control manifests aligned: "
+    f"plugin_tools={len(plugin_tools)} "
+    f"bridge_stable_ops={len(bridge_stable)} "
+    f"bridge_scaffold_ops={len(bridge_scaffold)}"
+)
+PY
 
 echo
 echo "host-control contract verification passed."
-echo "Scaffold-only bridge operations remain hidden from the plugin surface."
+echo "Owner-published manifests and owner-local contract tests are aligned."

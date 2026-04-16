@@ -4,57 +4,81 @@ set -euo pipefail
 ROOT="${1:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
 PARENT="$(cd -- "$ROOT/.." && pwd)"
 CANON_TELEGRAM="${OPENCLAW_TELEGRAM_REPO:-$PARENT/openclaw-telegram-enhanced}"
-CANON_ROUTER="$CANON_TELEGRAM/src/bot-message-dispatch.host-control.ts"
+TELEGRAM_MANIFEST="$CANON_TELEGRAM/contracts/interface-manifest.json"
+TELEGRAM_PACKAGE="$CANON_TELEGRAM/package.json"
 
-search() {
-  local pattern="$1"
-  shift
-  grep -nE "$pattern" "$@"
-}
+required_paths=(
+  "$CANON_TELEGRAM"
+  "$TELEGRAM_MANIFEST"
+  "$TELEGRAM_PACKAGE"
+)
 
-if [[ ! -f "$CANON_ROUTER" ]]; then
-  echo "Missing required router file: $CANON_ROUTER" >&2
-  exit 1
-fi
+for path in "${required_paths[@]}"; do
+  if [[ ! -e "$path" ]]; then
+    echo "Missing required path: $path" >&2
+    exit 1
+  fi
+done
 
 echo "Verifying Telegram host-control router contract"
-echo "  source router: $CANON_ROUTER"
+echo "  Telegram repo    : $CANON_TELEGRAM"
+echo "  interface manifest: $TELEGRAM_MANIFEST"
 echo
 
-if search 'what about|how about' "$CANON_ROUTER" >/dev/null; then
-  echo "Router still contains overly broad conversational host-control triggers." >&2
-  exit 1
-fi
+npm --prefix "$CANON_TELEGRAM" run test:host-control-contract
 
-if ! search "answer normally|just answer|no tools?|don't use (pc-?control|tools?)" "$CANON_ROUTER" >/dev/null; then
-  echo "Router is missing non-host-control escape phrases." >&2
-  exit 1
-fi
+python3 - "$TELEGRAM_MANIFEST" <<'PY'
+from __future__ import annotations
 
-if ! grep -F 'looksLikeHostScopedFindText(normalized)' "$CANON_ROUTER" >/dev/null; then
-  echo "Router no longer checks for host-scoped find intent." >&2
-  exit 1
-fi
+import json
+import sys
+from pathlib import Path
 
-if ! grep -F 'extractGeneralQuery(normalized)' "$CANON_ROUTER" >/dev/null; then
-  echo "Router no longer guards generic find/search behind host-scoped intent." >&2
-  exit 1
-fi
+manifest_path = Path(sys.argv[1])
+manifest = json.loads(manifest_path.read_text())
+routing = manifest.get("hostControlReadRouting", {})
 
-if ! grep -F 'loadDirectReadProposalById(params.sessionKey, params.proposalId)' "$CANON_ROUTER" >/dev/null; then
-  echo "Router no longer resolves persisted direct-read proposals from button callbacks." >&2
-  exit 1
-fi
+errors: list[str] = []
+if manifest.get("schemaVersion") != 1:
+    errors.append("schemaVersion must be 1")
+if manifest.get("contractId") != "openclaw-telegram-host-control-router.v1":
+    errors.append("unexpected contractId")
+if manifest.get("ownerRepo") != "openclaw-telegram-enhanced":
+    errors.append("unexpected ownerRepo")
 
-if ! grep -F 'await params.clearButtons();' "$CANON_ROUTER" >/dev/null; then
-  echo "Router no longer clears Proceed/Cancel buttons after direct-read execution." >&2
-  exit 1
-fi
+prefixes = routing.get("callbackPrefixes", {})
+if prefixes.get("proceed") != "pcctl:proceed:":
+    errors.append("missing proceed callback prefix")
+if prefixes.get("cancel") != "pcctl:cancel:":
+    errors.append("missing cancel callback prefix")
 
-if ! search 'pcctl:proceed:|pcctl:cancel:' "$CANON_ROUTER" >/dev/null; then
-  echo "Router is missing deterministic Proceed/Cancel button callbacks." >&2
-  exit 1
-fi
+if set(routing.get("blockedConversationalTriggers", [])) != {"what about", "how about"}:
+    errors.append("blocked conversational triggers drifted")
+
+required_escape_phrases = {"answer normally", "just answer", "no tools", "don't use tools"}
+if set(routing.get("escapePhrases", [])) != required_escape_phrases:
+    errors.append("escape phrase contract drifted")
+
+for key in (
+    "guardsGenericFindQueryBehindHostScope",
+    "resolvesPersistedProposalCallbacksById",
+    "clearsButtonsAfterDirectReadExecution",
+):
+    if routing.get(key) is not True:
+        errors.append(f"{key} must remain true")
+
+if errors:
+    for error in errors:
+        print(f"ERROR: {error}")
+    sys.exit(1)
+
+print(
+    "telegram router manifest valid: "
+    f"callbacks={sorted(prefixes.keys())} "
+    f"escapes={len(routing.get('escapePhrases', []))} "
+    f"blocked_triggers={len(routing.get('blockedConversationalTriggers', []))}"
+)
+PY
 
 echo "Telegram router contract verification passed."
-echo "Generic chat escapes remain available and broad conversational triggers stay blocked."
+echo "Owner-published manifest and owner-local router contract test are aligned."

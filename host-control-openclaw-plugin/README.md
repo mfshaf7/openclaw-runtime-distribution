@@ -116,7 +116,15 @@ Run:
 ```bash
 node test/config.test.mjs
 node test/tools.test.mjs
+npm run test:interface-contract
 ```
+
+The published downstream contract lives in:
+
+- `contracts/interface-manifest.json`
+
+`openclaw-runtime-distribution` and other downstream checks should consume this
+contract instead of inferring tool exposure from private source text.
 
 ## Related repositories
 

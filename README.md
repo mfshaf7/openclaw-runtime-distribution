@@ -30,7 +30,8 @@ It does not own:
    - `openclaw-host-bridge`
    - active plugin owner in this repo
 2. This repo stages the required packaged runtime inputs.
-3. Verification scripts confirm the bundled runtime contract.
+3. Verification scripts confirm the bundled runtime contract against
+   owner-published interface manifests.
 4. The resulting artifact is built and published through the governed platform
    workflow.
 5. `platform-engineering` records the approved digest and SHAs.
@@ -57,6 +58,10 @@ runtime metrics.
   - `deployment/verify-telegram-router-contract.sh`
   - `deployment/verify-bridge-workspace.sh`
   - `deployment/verify-host-control-contract.sh`
+- owner-published interface manifests:
+  - `openclaw-telegram-enhanced/contracts/interface-manifest.json`
+  - `openclaw-host-bridge/contracts/interface-manifest.json`
+  - `host-control-openclaw-plugin/contracts/interface-manifest.json`
 - build procedure and requirements:
   - [deployment/build-checklist.md](deployment/build-checklist.md)
 - migration and seam rationale:
@@ -69,6 +74,8 @@ runtime metrics.
 - Canonical source changes should land in their owner repo first.
 - This repo should stage those sources through supported packaging paths, not by
   growing new mirrored source trees.
+- Contract verification here should consume owner-published manifests and
+  owner-local contract tests rather than grepping private source text.
 - If the active build path changes, this README and the platform standards
   should say so explicitly.
 - If a runtime contract change requires new operator validation, document it in

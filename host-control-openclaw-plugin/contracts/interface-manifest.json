@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "contractId": "host-control-openclaw-plugin.interface.v1",
+  "ownerRepo": "openclaw-runtime-distribution",
+  "bridgeOwnerRepo": "openclaw-host-bridge",
+  "forbiddenBridgeOperations": [
+    "browser.tabs.list",
+    "browser.tabs.inspect",
+    "fs.zip_for_export"
+  ],
+  "forbiddenToolNames": [
+    "host_control_browser_tabs_list",
+    "host_control_browser_tab_inspect",
+    "host_control_zip_for_export"
+  ],
+  "tools": [
+    {
+      "name": "host_control_health_check",
+      "gate": "always",
+      "bridgeOperations": [
+        "health.check"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_list",
+      "gate": "always",
+      "bridgeOperations": [
+        "fs.list"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_list_host_folder",
+      "gate": "always",
+      "bridgeOperations": [
+        "fs.list"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_search",
+      "gate": "always",
+      "bridgeOperations": [
+        "fs.search"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_find_host_files",
+      "gate": "always",
+      "bridgeOperations": [
+        "fs.search"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_find_in_allowed_roots",
+      "gate": "always",
+      "bridgeOperations": [
+        "config.allowed_roots.list",
+        "fs.search"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_read_meta",
+      "gate": "always",
+      "bridgeOperations": [
+        "fs.read_meta"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": false,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_mkdir",
+      "gate": "allowWriteOperations",
+      "bridgeOperations": [
+        "fs.mkdir"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_move",
+      "gate": "allowWriteOperations",
+      "bridgeOperations": [
+        "fs.move"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_fs_quarantine",
+      "gate": "allowWriteOperations",
+      "bridgeOperations": [
+        "fs.quarantine"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_turn_off_monitors",
+      "gate": "allowAdminOperations",
+      "bridgeOperations": [
+        "display.monitor_power"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_turn_on_monitors",
+      "gate": "allowAdminOperations",
+      "bridgeOperations": [
+        "display.monitor_power"
+      ],
+      "resultKind": "json",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_stage_for_telegram",
+      "gate": "allowExportOperations",
+      "bridgeOperations": [
+        "fs.stage_for_telegram"
+      ],
+      "resultKind": "media",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": true
+    },
+    {
+      "name": "host_control_send_file_to_telegram",
+      "gate": "allowExportOperations",
+      "bridgeOperations": [
+        "fs.stage_for_telegram"
+      ],
+      "resultKind": "media",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": true
+    },
+    {
+      "name": "host_control_capture_desktop_screenshot",
+      "gate": "allowExportOperations",
+      "bridgeOperations": [
+        "display.screenshot"
+      ],
+      "resultKind": "media",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": false
+    },
+    {
+      "name": "host_control_send_desktop_screenshot_to_telegram",
+      "gate": "allowExportOperations",
+      "bridgeOperations": [
+        "display.screenshot"
+      ],
+      "resultKind": "media",
+      "requiresConfirm": true,
+      "telegramConfirmBypass": true
+    }
+  ]
+}
