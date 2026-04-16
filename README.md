@@ -12,7 +12,8 @@ This repository owns:
 
 - current bundled runtime assembly inputs
 - packaged Telegram runtime seam integration
-- experimental Telegram-only overlay artifact packaging for stage rehearsal
+- Telegram-only overlay artifact packaging for stage qualification and governed
+  prod promotion on a qualified base
 - active `host-control-openclaw-plugin` package copy for stage/prod
 - runtime-required workspace templates for the governed image
 - distribution-specific verification and packaging scripts
@@ -33,9 +34,11 @@ It does not own:
 2. This repo stages the required packaged runtime inputs.
 3. Verification scripts confirm the bundled runtime contract against
    owner-published interface manifests.
-4. The resulting gateway or Telegram-only experiment artifact is built and
+4. The resulting gateway or Telegram overlay artifact is built and
    published through the governed platform workflow.
-5. `platform-engineering` records the approved digest and SHAs.
+5. `platform-engineering` records the approved digest, SHAs, and when needed
+   the qualified OpenClaw base image that the overlay lane is allowed to run
+   against.
 
 ## Supported Telegram Runtime Seam
 
@@ -50,12 +53,13 @@ That means:
 - every OpenClaw base-image update requires contract verification against the
   packaged runtime seam
 
-For stage-only experimentation, the same packaged Telegram overlay may also be
+For small Telegram-only fixes, the same packaged Telegram overlay may also be
 delivered as a separate immutable artifact and mounted back onto the bundled
-runtime path. That experiment must remain:
+runtime path. That lane must remain:
 
-- stage-only until separately approved for prod
 - pinned by digest in `platform-engineering`
+- stage-qualified before any prod use
+- promoted to prod only on the same qualified OpenClaw base image
 - sourced from the same `npm pack` allowlist used for the bundled gateway image
 
 ## Audit And Visibility

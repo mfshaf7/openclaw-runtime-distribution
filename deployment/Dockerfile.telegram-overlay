@@ -1,9 +1,9 @@
 ARG TELEGRAM_OVERLAY_BASE_IMAGE=busybox:1.36.1
 FROM ${TELEGRAM_OVERLAY_BASE_IMAGE}
 
-# Stage-only experiment image for fast Telegram-only rehearsal. The init
-# container copies this immutable overlay into a shared volume mounted at the
-# bundled Telegram runtime path.
+# Telegram overlay artifact for fast Telegram-only repair on a qualified
+# OpenClaw base line. The init container copies this immutable overlay into a
+# shared volume mounted at the bundled Telegram runtime path.
 USER root
 COPY deployment/.build/telegram-overlay/ /telegram-overlay/
 RUN mkdir -p /work

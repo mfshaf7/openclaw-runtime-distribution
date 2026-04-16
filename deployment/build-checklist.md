@@ -27,13 +27,13 @@
 - [ ] `./deployment/verify-bridge-workspace.sh` passes
 - [ ] `./deployment/verify-host-control-contract.sh` passes
 - [ ] Telegram and host-control build inputs staged through `./deployment/package-local-plugins.sh`
-- [ ] Telegram-only stage experiment inputs, when used, staged through `./deployment/package-telegram-overlay.sh`
+- [ ] Telegram overlay artifact inputs, when used, staged through `./deployment/package-telegram-overlay.sh`
 - [ ] Gateway image built through `./deployment/build-openclaw-local.sh` or an equivalent command path
 - [ ] Compiled Telegram runtime present under `/app/extensions/telegram`
 - [ ] `TELEGRAM_BOT_TOKEN` remains the packaged Telegram configured-state gate after build
 - [ ] Compiled Telegram runtime still exports the runtime hooks needed for monitoring/polling
 - [ ] No same-id global Telegram override is present in `/home/node/.openclaw/extensions/telegram`
-- [ ] Any stage-only Telegram overlay experiment still mounts back onto `/app/extensions/telegram`, not a same-id global user-home override
+- [ ] Any Telegram overlay artifact lane still mounts back onto `/app/extensions/telegram`, not a same-id global user-home override
 - [ ] Bundled host-control runtime present under `/app/extensions/host-control`
 - [ ] Host-control remains registered in the runtime plugin registry
 - [ ] Deployment contract mounts `/home/node/.openclaw/media` when Telegram file or screenshot delivery depends on bridge-staged media
