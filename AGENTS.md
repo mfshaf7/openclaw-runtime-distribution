@@ -23,7 +23,7 @@ promotion state.
 - `security-architecture/docs/architecture/products/openclaw/required-controls.md`
 - `security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`
 - `security-architecture/docs/reviews/security-review-checklist.md`
-- `security-architecture/docs/reviews/components/README.md`
+- `security-architecture/docs/reviews/components/2026-04-18-openclaw-runtime-distribution-security-baseline.md`
 
 ## Working Rules
 
