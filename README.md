@@ -89,7 +89,7 @@ runtime metrics.
 - [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)
 - [`security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/domains/gitops-and-machine-trust.md)
 - [`security-architecture/docs/reviews/security-review-checklist.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/security-review-checklist.md)
-- [`security-architecture/docs/reviews/components/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/README.md)
+- [`security-architecture/docs/reviews/components/2026-04-18-openclaw-runtime-distribution-security-baseline.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/2026-04-18-openclaw-runtime-distribution-security-baseline.md)
 
 ## Governance Rules
 
@@ -114,7 +114,7 @@ runtime metrics.
   - [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)
   - [`security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/domains/gitops-and-machine-trust.md)
   - [`security-architecture/docs/reviews/security-review-checklist.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/security-review-checklist.md)
-  - [`security-architecture/docs/reviews/components/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/README.md)
+  - [`security-architecture/docs/reviews/components/2026-04-18-openclaw-runtime-distribution-security-baseline.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/reviews/components/2026-04-18-openclaw-runtime-distribution-security-baseline.md)
 
 ## Relationship To Other Repositories
 
