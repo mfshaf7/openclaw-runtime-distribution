@@ -83,6 +83,13 @@ runtime metrics.
 - final deployment evidence:
   - source SHAs and digests recorded in `platform-engineering`
 
+Security-significant or production-impacting source changes should also leave a
+short evidence record under
+[`docs/records/change-records/`](docs/records/change-records/README.md). When
+the change should feed `security-architecture` automation, include structured
+`security_evidence` front matter so the cross-repo security index can harvest
+it directly.
+
 ## Security References
 
 - [`security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/components/openclaw-runtime-distribution/README.md)
@@ -109,6 +116,7 @@ runtime metrics.
 - [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
 - `deployment/build-openclaw-local.sh`
 - `deployment/package-local-plugins.sh`
+- `python3 scripts/validate_governance_docs.py --repo-root .`
 - security review surfaces:
   - [`security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/components/openclaw-runtime-distribution/README.md)
   - [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)

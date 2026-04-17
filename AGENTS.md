@@ -19,6 +19,7 @@ promotion state.
 - `README.md`
 - `deployment/build-checklist.md`
 - `deployment/telegram-runtime-migration.md`
+- `docs/records/change-records/README.md`
 - `security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`
 - `security-architecture/docs/architecture/products/openclaw/required-controls.md`
 - `security-architecture/docs/architecture/domains/gitops-and-machine-trust.md`
@@ -41,3 +42,4 @@ promotion state.
 - `./deployment/verify-host-control-contract.sh`
 - `./deployment/package-telegram-overlay.sh`
 - `./deployment/build-openclaw-local.sh`
+- `python3 scripts/validate_governance_docs.py --repo-root .` when change-record evidence changes
