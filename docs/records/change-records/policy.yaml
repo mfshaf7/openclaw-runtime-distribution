@@ -1,0 +1,13 @@
+schema_version: 1
+security_change_record_policy:
+  change_record_dir: docs/records/change-records
+  rules:
+    - id: runtime-composition-and-overlay
+      description: Runtime composition, overlay packaging, and contract-validation changes must carry a security-tagged change record.
+      match_any:
+        - deployment/**
+        - host-control-openclaw-plugin/**
+        - scripts/**
+      required_review_areas:
+        - delivery
+        - runtime
