@@ -19,18 +19,19 @@ For this deployment, Telegram customization is supported through the packaged bu
 - config contract: documented Telegram config keys only
 - distribution repo responsibility: overlay and verify the packaged runtime, not a same-id global plugin override
 
-## Stage-only experiment seam
+## Telegram overlay artifact lane
 
-To reduce the cost of small Telegram-only fixes during stage rehearsal, the
+To reduce the cost of small Telegram-only fixes, the
 same packaged overlay can be delivered as a separate immutable artifact and
 mounted back onto the bundled runtime path:
 
 - packaged overlay source: `deployment/.build/telegram-overlay/telegram`
 - artifact packager: `deployment/package-telegram-overlay.sh`
 - runtime destination: `/app/extensions/telegram`
-- delivery model: stage-only init-container copy into a shared volume
+- delivery model: init-container copy into a shared volume, qualified on stage,
+  and promotable only on the same approved OpenClaw base image
 
-This is an experiment in artifact granularity, not permission to reintroduce a
+This is a governed artifact-granularity lane, not permission to reintroduce a
 same-id global Telegram override or mutable runtime patching.
 
 ## Explicitly unsupported assumptions
