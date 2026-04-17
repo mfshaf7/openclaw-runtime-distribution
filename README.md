@@ -117,6 +117,7 @@ it directly.
 - `deployment/build-openclaw-local.sh`
 - `deployment/package-local-plugins.sh`
 - `python3 scripts/validate_governance_docs.py --repo-root .`
+- `python3 scripts/validate_change_record_requirement.py --repo-root . --against-ref origin/main`
 - security review surfaces:
   - [`security-architecture/docs/architecture/components/openclaw-runtime-distribution/README.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/components/openclaw-runtime-distribution/README.md)
   - [`security-architecture/docs/architecture/products/openclaw/required-controls.md`](https://github.com/mfshaf7/security-architecture/blob/main/docs/architecture/products/openclaw/required-controls.md)

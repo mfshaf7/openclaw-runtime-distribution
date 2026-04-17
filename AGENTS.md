@@ -43,3 +43,4 @@ promotion state.
 - `./deployment/package-telegram-overlay.sh`
 - `./deployment/build-openclaw-local.sh`
 - `python3 scripts/validate_governance_docs.py --repo-root .` when change-record evidence changes
+- `python3 scripts/validate_change_record_requirement.py --repo-root . --against-ref origin/main` for PR-shaped distribution changes that should emit a security-tagged change record
