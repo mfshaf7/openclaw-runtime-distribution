@@ -1,0 +1,11 @@
+# Runtime distribution governance
+* @mfshaf7
+
+# Review and CI controls
+/.github/ @mfshaf7
+
+# Governed runtime composition and packaging
+/deployment/ @mfshaf7
+/docs/ @mfshaf7
+/host-control-openclaw-plugin/ @mfshaf7
+/scripts/ @mfshaf7

@@ -36,6 +36,19 @@ promotion state.
 - If the active build path changes, update this repo and
   `platform-engineering` together.
 
+## Review guidelines
+
+For Codex GitHub review, treat the following as `P1` when they plausibly
+regress the governed runtime composition path:
+
+- copied-source drift or new mirrored Telegram or bridge source appearing here
+  instead of in the canonical owner repo
+- runtime seam or packaging changes that bypass the declared verification scripts
+  or skip required platform-engineering coordination when the active
+  build path changes
+- change-record or runtime-evidence regressions that would let a distribution
+  change land without reviewable governed evidence
+
 ## Validation
 
 - `./deployment/verify-telegram-router-contract.sh`
