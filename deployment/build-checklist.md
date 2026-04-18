@@ -1,5 +1,9 @@
 # Build Checklist
 
+Use [operator-build-procedure.md](operator-build-procedure.md) as the primary
+operator path. This checklist is supporting verification, not the primary
+workflow description.
+
 ## Operator workspace
 - [ ] Ubuntu WSL installed
 - [ ] Ubuntu shell opened and verified

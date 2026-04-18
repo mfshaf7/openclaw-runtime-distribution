@@ -112,6 +112,7 @@ it directly.
 
 ## Start Here
 
+- [deployment/operator-build-procedure.md](deployment/operator-build-procedure.md)
 - [deployment/build-checklist.md](deployment/build-checklist.md)
 - [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
 - `deployment/build-openclaw-local.sh`

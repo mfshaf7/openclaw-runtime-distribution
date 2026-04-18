@@ -17,6 +17,7 @@ promotion state.
 ## Read First
 
 - `README.md`
+- `deployment/operator-build-procedure.md`
 - `deployment/build-checklist.md`
 - `deployment/telegram-runtime-migration.md`
 - `docs/records/change-records/README.md`
