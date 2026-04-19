@@ -51,6 +51,7 @@ regress the governed runtime composition path:
 
 ## Validation
 
+- `python3 scripts/validate_repo_docs.py --repo-root .`
 - `./deployment/verify-telegram-router-contract.sh`
 - `./deployment/verify-bridge-workspace.sh`
 - `./deployment/verify-host-control-contract.sh`
