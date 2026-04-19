@@ -68,6 +68,7 @@ This repo’s main evidence surfaces are build-time and contract-time rather tha
 runtime metrics.
 
 - packaging and contract checks:
+  - `python3 scripts/validate_repo_docs.py --repo-root .`
   - `deployment/verify-telegram-router-contract.sh`
   - `deployment/verify-bridge-workspace.sh`
   - `deployment/verify-host-control-contract.sh`
@@ -117,6 +118,7 @@ it directly.
 - [deployment/telegram-runtime-migration.md](deployment/telegram-runtime-migration.md)
 - `deployment/build-openclaw-local.sh`
 - `deployment/package-local-plugins.sh`
+- `python3 scripts/validate_repo_docs.py --repo-root .`
 - `python3 scripts/validate_governance_docs.py --repo-root .`
 - `python3 scripts/validate_change_record_requirement.py --repo-root . --against-ref origin/main`
 - security review surfaces:
