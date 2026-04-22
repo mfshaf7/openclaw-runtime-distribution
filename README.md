@@ -6,6 +6,28 @@ repository for the current governed gateway build path.
 It assembles a reproducible gateway image from pinned upstream repos without
 carrying copied Telegram or bridge source trees as long-lived hidden forks.
 
+## Architecture At A Glance
+
+```mermaid
+flowchart LR
+    Telegram[openclaw-telegram-enhanced]
+    Bridge[openclaw-host-bridge]
+    Plugin[Packaged host-control plugin]
+    Dist[openclaw-runtime-distribution]
+    Artifact[Governed gateway image<br/>or Telegram overlay]
+    Platform[platform-engineering]
+
+    Telegram --> Dist
+    Bridge --> Dist
+    Plugin --> Dist
+    Dist --> Artifact
+    Artifact --> Platform
+```
+
+This repo is the runtime assembly seam. It packages approved inputs into a
+reproducible OpenClaw runtime artifact, but it does not replace the canonical
+source repos or the platform approval path.
+
 ## What This Repository Owns
 
 This repository owns:
